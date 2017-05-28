@@ -1,9 +1,20 @@
-all:
+GOOS=windows
+GOARCH=amd64
+OUT=sample.exe
+BINDATA=HelloWorld.exe
+SRC=main.go
+
+.clean-bindata:
 	rm -rf res
-	rm -rf main.exe
+
+.build-bindata: .clean-bindata
 	mkdir res
-	go-bindata -pkg res -o res.go HelloWorld.exe
+	go-bindata -pkg res -o res.go $(BINDATA)
 	mv res.go res
-	GOOS=windows GOARCH=amd64 go build main.go
 
+all: clean .build-bindata
+	go build -o $(OUT) $(SRC)
 
+clean: .clean-bindata
+	go clean
+	rm -rf $(OUT)
